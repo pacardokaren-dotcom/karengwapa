@@ -1,12 +1,10 @@
+import os
 from flask import Flask, request, jsonify, render_template_string
 import sqlite3
 
 app = Flask(__name__)
-DATABASE = 'students.db'
+DATABASE = os.path.join(app.root_path, 'students.db')
 
-# -----------------------------
-# Initialize DB
-# -----------------------------
 def init_db():
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
@@ -21,6 +19,9 @@ def init_db():
     conn.commit()
     conn.close()
 
+@app.before_first_request
+def initialize_database():
+    init_db()
 # -----------------------------
 # Connect to DB
 # -----------------------------
@@ -193,3 +194,4 @@ def edit_student(id):
 if __name__ == '__main__':
     init_db()  # ensure table exists
     app.run(host='0.0.0.0', port=5000, debug=True)
+
