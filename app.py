@@ -5,6 +5,7 @@ import sqlite3
 app = Flask(__name__)
 DATABASE = os.path.join(app.root_path, 'students.db')
 
+# Initialize DB immediately
 def init_db():
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
@@ -19,16 +20,16 @@ def init_db():
     conn.commit()
     conn.close()
 
-@app.before_first_request
-def initialize_database():
-    init_db()
-# -----------------------------
+# Call init_db at the very start
+init_db()
+
 # Connect to DB
-# -----------------------------
 def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
+# Routes go here...
 
 # -----------------------------
 # Home Page
@@ -194,4 +195,5 @@ def edit_student(id):
 if __name__ == '__main__':
     init_db()  # ensure table exists
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
